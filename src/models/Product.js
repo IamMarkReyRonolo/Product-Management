@@ -5,8 +5,8 @@ const productSchema = mongoose.Schema({
 	name: {
 		type: String,
 		required: true,
-		accounts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Account" }],
 	},
+	accounts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Account" }],
 });
 
 module.exports = mongoose.model("Product", productSchema);
