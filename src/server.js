@@ -13,6 +13,13 @@ app.use(express.json());
 require("./database/database");
 
 // ROUTER
+const productsAPI = require("./api/product");
+const accountsAPI = require("./api/account");
+const customersAPI = require("./api/customer");
+
+app.use("/api/products", productsAPI);
+app.use("/api", accountsAPI);
+app.use("/api", customersAPI);
 
 // ERROR HANDLING
 app.use((req, res, next) => {
