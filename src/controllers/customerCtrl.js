@@ -25,15 +25,30 @@ const getSpecificCustomer = (req, res, next) => {
 		if (err) {
 			next(err);
 		} else {
-			if (customer) {
-				res.status(200).json(customer);
-			} else {
+			if (!customer) {
 				const error = new Error("Not Found");
 				error.status = 404;
 				next(error);
 			}
 		}
-	});
+	})
+		.populate("accounts")
+		.exec((err, customer) => {
+			if (err) {
+				next(err);
+			} else {
+				res.status(200).json({
+					id: customer._id,
+					name: customer.name,
+					phone: customer.phone,
+					facebook: customer.facebook,
+					accounts: {
+						count: customer.accounts.length,
+						accounts: customer.accounts,
+					},
+				});
+			}
+		});
 };
 
 const addCustomer = async (req, res, next) => {
@@ -48,7 +63,16 @@ const addCustomer = async (req, res, next) => {
 				.then((result) => {
 					account.customers.push(customer);
 					account.save().then((result) => {
-						res.status(201).json(result);
+						res.status(201).json({
+							message: "Successfully added customer",
+							customer: {
+								id: customer._id,
+								name: customer.name,
+								phone: customer.phone,
+								facebook: customer.facebook,
+								accounts: customer.accounts,
+							},
+						});
 					});
 				})
 				.catch((err) => {
@@ -76,6 +100,13 @@ const updateCustomer = (req, res, next) => {
 				if (customer) {
 					res.status(200).json({
 						message: "Successfully updated customer",
+						customer: {
+							id: customer._id,
+							name: customer.name,
+							phone: customer.phone,
+							facebook: customer.facebook,
+							accounts: customer.accounts,
+						},
 					});
 				} else {
 					const error = new Error("Not Found");

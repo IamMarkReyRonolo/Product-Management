@@ -6,7 +6,10 @@ const getAllProducts = (req, res, next) => {
 		if (err) {
 			next(err);
 		} else {
-			res.status(200).json({ count: products.length, result: products });
+			res.status(200).json({
+				count: products.length,
+				products,
+			});
 		}
 	});
 };
@@ -16,15 +19,28 @@ const getSpecificProduct = (req, res, next) => {
 		if (err) {
 			next(err);
 		} else {
-			if (product) {
-				res.status(200).json({ product: product });
-			} else {
+			if (!product) {
 				const error = new Error("Not found");
 				error.status = 404;
 				next(error);
 			}
 		}
-	});
+	})
+		.populate("accounts")
+		.exec((err, product) => {
+			if (err) {
+				next(err);
+			} else {
+				res.status(200).json({
+					id: product._id,
+					name: product.name,
+					accounts: {
+						count: product.accounts.length,
+						accounts: product.accounts,
+					},
+				});
+			}
+		});
 };
 
 const addProduct = (req, res, next) => {
@@ -36,7 +52,17 @@ const addProduct = (req, res, next) => {
 	product
 		.save()
 		.then((result) => {
-			res.status(201).json({ message: "Success", product: result });
+			res.status(201).json({
+				message: "Success",
+				product: {
+					id: product._id,
+					name: product.name,
+					accounts: {
+						count: product.accounts.length,
+						accounts: product.accounts,
+					},
+				},
+			});
 		})
 		.catch((err) => {
 			next(err);
@@ -55,7 +81,14 @@ const updateProduct = (req, res, next) => {
 				if (product) {
 					res.status(201).json({
 						message: "Succesfully updated product.",
-						product: product,
+						product: {
+							id: product._id,
+							name: product.name,
+							accounts: {
+								count: product.accounts.length,
+								accounts: product.accounts,
+							},
+						},
 					});
 				} else {
 					const error = new Error("Not found");
