@@ -4,7 +4,6 @@ const Customer = require("../models/Customer");
 const Account = require("../models/Account");
 
 const getAllCustomers = (req, res, next) => {
-	console.log("yow");
 	Customer.find({}, (err, customers) => {
 		if (err) {
 			next(err);
@@ -32,7 +31,7 @@ const getSpecificCustomer = (req, res, next) => {
 			}
 		}
 	})
-		.populate("accounts")
+		.populate("accounts.account")
 		.exec((err, customer) => {
 			if (err) {
 				next(err);
@@ -55,9 +54,20 @@ const addCustomer = async (req, res, next) => {
 	try {
 		const account = await Account.findById(req.params.accountId);
 		if (account) {
-			const customer = Customer(req.body);
+			const customer = Customer({
+				name: req.body.name,
+				phone: req.body.phone,
+				facebook: req.body.facebook,
+			});
 			customer._id = mongoose.Types.ObjectId();
-			customer.accounts.push(account);
+
+			const acc = {
+				account: account,
+				pin: req.body.pin,
+				subscriptionPurchased: new Date(req.body.subscriptionPurchased),
+				subscriptionExpires: new Date(req.body.subscriptionExpires),
+			};
+			customer.accounts.push(acc);
 			customer
 				.save()
 				.then((result) => {

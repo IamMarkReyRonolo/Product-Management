@@ -16,7 +16,14 @@ const customerSchema = mongoose.Schema({
 	facebook: {
 		type: String,
 	},
-	accounts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Account" }],
+	accounts: [
+		{
+			account: { type: mongoose.Schema.Types.ObjectId, ref: "Account" },
+			pin: Number,
+			subscriptionPurchased: Date,
+			subscriptionExpires: Date,
+		},
+	],
 });
 
 module.exports = mongoose.model("Customer", customerSchema);
