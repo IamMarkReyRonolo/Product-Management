@@ -64,6 +64,7 @@ const addCustomer = async (req, res, next) => {
 			const acc = {
 				account: account,
 				pin: req.body.pin,
+				subscriptionPrice: req.body.subscriptionPrice,
 				subscriptionPurchased: new Date(req.body.subscriptionPurchased),
 				subscriptionExpires: new Date(req.body.subscriptionExpires),
 			};

@@ -20,6 +20,7 @@ const customerSchema = mongoose.Schema({
 		{
 			account: { type: mongoose.Schema.Types.ObjectId, ref: "Account" },
 			pin: Number,
+			subscriptionPrice: Number,
 			subscriptionPurchased: Date,
 			subscriptionExpires: Date,
 		},
